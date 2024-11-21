@@ -9,7 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
@@ -22,7 +24,7 @@ internal fun AirQualityDetailsScreen(
     viewModel: MainViewModel,
     navController: NavController
 ) {
-    val userLocation = remember { viewModel.userLocationPreference.value }
+    val userLocation by rememberSaveable { mutableStateOf(viewModel.uiState.value.userLocation) }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
@@ -40,14 +42,13 @@ internal fun AirQualityDetailsScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (userLocation.data != null) {
+                    if (userLocation != null) {
                         Text(
-                            text = "Your current location coordinate is: ${userLocation.data.first}, ${userLocation.data.second}",
+                            text = "Your current location coordinate is: ${userLocation?.first}, ${userLocation?.second}",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground,
                         )
                     }
-
                 }
             }
         )

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -22,6 +24,11 @@ android {
         multiDexEnabled = ConfigData.multiDexEnabled
         testInstrumentationRunner = "bose.ankush.weatherify.helper.HiltTestRunner"
         resourceConfigurations.addAll(listOf("en", "hi", "iw"))
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -64,7 +71,9 @@ android {
 }
 
 composeCompiler {
-    enableStrongSkippingMode = true
+    featureFlags = setOf(
+        ComposeFeatureFlag.StrongSkipping.disabled()
+    )
 }
 
 dependencies {

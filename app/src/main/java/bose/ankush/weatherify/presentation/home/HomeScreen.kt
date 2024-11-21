@@ -39,31 +39,35 @@ fun HomeScreen(
     navController: NavController
 ) {
     val context: Context = LocalContext.current
-    val weatherReports: UIState<WeatherEntity> = viewModel.weatherReport.collectAsState().value
-    val airQualityReports: UIState<AirQuality> = viewModel.airQualityReport.collectAsState().value
+    val uiState: UIState = viewModel.uiState.collectAsState().value
 
     // reacting as per response state change
+    Timber.tag("Ankush UI State").d("HomeScreen: %s", uiState)
     when {
-        weatherReports.isLoading && airQualityReports.isLoading ->
+        uiState.isLoading ->
             // Screen loading handler
             HandleScreenLoading()
 
-        !weatherReports.error?.asString(context).isNullOrEmpty() ||
-                !weatherReports.error?.asString(context).isNullOrEmpty() ->
+        !uiState.error?.asString(context).isNullOrEmpty() ->
             // Screen error handler
             HandleScreenError(
                 context,
-                weatherReports.error,
-                airQualityReports.error
-            ) { viewModel.performInitialDataLoading() }
+                uiState.error,
+                uiState.error
+            ) { viewModel.fetchAndSaveLocationCoordinates() }
 
-        else ->
+        uiState.weatherData?.current?.weather?.isNotEmpty() == true ||
+                uiState.airQualityData?.aqi != null ->
             // Show data on UI
             ShowUIContainer(
-                weatherReports.data,
-                airQualityReports.data,
+                uiState.weatherData,
+                uiState.airQualityData,
                 navController
             )
+
+        else ->
+            // Screen loading handler for any other states
+            HandleScreenLoading()
     }
 
     // Handle back button press to exit app

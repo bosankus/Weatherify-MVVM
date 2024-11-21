@@ -7,10 +7,6 @@ class RefreshWeatherReport @Inject constructor(
     private val repository: WeatherRepository
 ) {
     suspend operator fun invoke(coordinates: Pair<Double, Double>) {
-        try {
-            repository.refreshWeatherData(coordinates)
-        } catch (e: Exception) {
-            e.message
-        }
+        repository.refreshWeatherData(coordinates)
     }
 }

@@ -1,12 +1,12 @@
 package bose.ankush.weatherify.data.repository
 
+import androidx.room.withTransaction
 import bose.ankush.weatherify.base.dispatcher.DispatcherProvider
 import bose.ankush.weatherify.data.remote.api.OpenWeatherApiService
-import bose.ankush.weatherify.data.remote.dto.AirQualityDto
-import bose.ankush.weatherify.data.remote.dto.ForecastDto
-import bose.ankush.weatherify.data.remote.dto.WeatherDto
+import bose.ankush.weatherify.data.remote.dto.toAirQuality
 import bose.ankush.weatherify.data.room.weather.WeatherDatabase
 import bose.ankush.weatherify.data.room.weather.WeatherEntity
+import bose.ankush.weatherify.domain.model.AirQuality
 import bose.ankush.weatherify.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -23,26 +23,10 @@ class WeatherRepositoryImpl @Inject constructor(
     private val dispatcher: DispatcherProvider,
 ) : WeatherRepository {
 
+    override suspend fun getAirQualityReport(lat: String, lang: String): Flow<AirQuality> =
+        weatherDatabase.weatherDao().getAirQuality()
 
-    override suspend fun getTodaysWeatherReport(cityName: String): WeatherDto =
-        withContext(dispatcher.io) {
-            apiService.getTodaysWeatherReport(location = cityName)
-        }
-
-    override suspend fun getWeatherForecastList(cityName: String): ForecastDto =
-        withContext(dispatcher.io) {
-            apiService.getWeatherForecastList(location = cityName)
-        }
-
-    override suspend fun getAirQualityReport(lat: String, lang: String): AirQualityDto =
-        withContext(dispatcher.io) {
-            apiService.getCurrentAirQuality(
-                latitude = lat,
-                longitude = lang
-            )
-        }
-
-    override fun getWeatherReport(): Flow<WeatherEntity> =
+    override suspend fun getWeatherReport(location: Pair<Double, Double>): Flow<WeatherEntity?> =
         weatherDatabase.weatherDao().getWeather()
 
     /**
@@ -56,8 +40,14 @@ class WeatherRepositoryImpl @Inject constructor(
                     coordinates.first.toString(),
                     coordinates.second.toString()
                 )
+                val airQuality = apiService.getCurrentAirQuality(
+                    latitude = coordinates.first.toString(),
+                    longitude = coordinates.second.toString()
+                ).toAirQuality()
                 // store the data in room db
-                weatherDatabase.weatherDao().refreshWeather(weatherData)
+                weatherDatabase.withTransaction {
+                    weatherDatabase.weatherDao().refreshWeather(weatherData, airQuality)
+                }
             } catch (e: Exception) {
                 // throw exception in case of error
                 e.message

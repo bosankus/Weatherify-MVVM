@@ -17,7 +17,6 @@ const val APP_UPDATE_REQ_CODE = 111
 const val APP_PREFERENCE_KEY = "app_preferences"
 
 /*Fallback user location coordinates*/
-val DEFAULT_LOCATION_COORDINATES = Pair(28.61792, 77.2079)
 const val DEFAULT_CITY_NAME = "New Delhi"
 
 /* Permission constants */
@@ -30,7 +29,4 @@ val PERMISSIONS_TO_REQUEST = arrayOf(
 
 /*Room central db name*/
 const val WEATHER_DATABASE_NAME = "central_weather_table"
-
-/*private const val PERMISSION_DENIED = 0
-private const val PERMISSION_GIVEN = 1
-private const val REQUEST_PERMISSION = 2*/
+const val AQ_DATABASE_NAME = "central_aq_table"
