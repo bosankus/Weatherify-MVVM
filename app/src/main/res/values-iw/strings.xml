@@ -47,4 +47,5 @@
     <string name="humidity_icon_content">סמל לחות</string>
     <string name="error_icon_content">סמל שגיאה</string>
     <string name="close_icon_content">סמל סגירה</string>
+    <string name="daily_forecast_heading_txt">תחזית יומית</string>
 </resources>

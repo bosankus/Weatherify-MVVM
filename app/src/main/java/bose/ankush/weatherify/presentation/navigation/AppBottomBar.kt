@@ -47,7 +47,7 @@ fun AppBottomBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp))
-                .height(80.dp)
+                .height(60.dp)
         ) {
             screenItems.forEachIndexed { index, screen ->
                 NavigationBarItem(

@@ -47,4 +47,5 @@
     <string name="humidity_icon_content">आर्द्रता चिह्न</string>
     <string name="error_icon_content">त्रुटि चिह्</string>
     <string name="close_icon_content">बंद करें चिह्</string>
+    <string name="daily_forecast_heading_txt">दैनिक पूर्वानुमान</string>
 </resources>

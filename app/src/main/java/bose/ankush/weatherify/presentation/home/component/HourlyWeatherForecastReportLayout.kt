@@ -41,22 +41,23 @@ import coil.compose.AsyncImage
 internal fun HourlyWeatherForecastReportLayout(
     hourlyWeatherForecasts: List<WeatherEntity.Hourly?>
 ) {
-    Column(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(id = R.string.hourly_forecast_heading_txt),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-        )
-        if (hourlyWeatherForecasts.isNotEmpty()) {
+    if (hourlyWeatherForecasts.isNotEmpty()) {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(id = R.string.hourly_forecast_heading_txt),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+            )
             FutureForecastListItem(hourlyWeatherForecasts) { /*TODO: item on click action*/ }
         }
-
+    } else {
+        /*No Need to show anything if data is empty*/
     }
 }
 
