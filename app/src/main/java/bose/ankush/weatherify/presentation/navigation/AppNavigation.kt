@@ -5,12 +5,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -44,9 +39,7 @@ fun AppNavigation(viewModel: MainViewModel) {
         ) {
             composable(
                 route = Screen.HomeScreen.route,
-            ) { entry ->
-                val viewModel = viewModel
-                //entry.sharedViewModel<WeatherViewModel>(navController = navController)
+            ) {
                 HomeScreen(
                     viewModel = viewModel,
                     navController = navController
@@ -107,9 +100,7 @@ fun AppNavigation(viewModel: MainViewModel) {
                         animationSpec = tween(500)
                     )
                 }
-            ) { entry ->
-                val viewModel = viewModel
-                // entry.sharedViewModel<WeatherViewModel>(navController = navController)
+            ) {
                 AirQualityDetailsScreen(
                     viewModel = viewModel,
                     navController = navController
@@ -126,6 +117,7 @@ fun AppNavigation(viewModel: MainViewModel) {
                 route = Screen.SettingsScreen.route,
             ) {
                 SettingsScreen(
+                    navController = navController,
                     onNavAction = { navController.popBackStack() },
                     onLanguageNavAction = {
                         if (isDeviceSDKAndroid13OrAbove()) {
@@ -178,13 +170,4 @@ fun AppNavigation(viewModel: MainViewModel) {
             }
         }
     }
-}
-
-@Composable
-inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavController): T {
-    val navGraphRoute = destination.parent?.route ?: return hiltViewModel()
-    val parentEntry = remember(this) {
-        navController.getBackStackEntry(navGraphRoute)
-    }
-    return hiltViewModel(parentEntry)
 }

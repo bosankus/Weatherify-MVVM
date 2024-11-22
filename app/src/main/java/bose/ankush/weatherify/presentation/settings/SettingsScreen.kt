@@ -18,16 +18,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import bose.ankush.weatherify.R
 import bose.ankush.weatherify.base.LocaleConfigMapper
 import bose.ankush.weatherify.base.common.component.ScreenTopAppBar
+import bose.ankush.weatherify.presentation.navigation.AppBottomBar
 
 @Composable
 fun SettingsScreen(
+    navController: NavController,
     onNavAction: () -> Unit,
     onLanguageNavAction:(Array<String>) -> Unit
 ) {
@@ -116,6 +120,12 @@ fun SettingsScreen(
                     )
                 }
             }
+        },
+        bottomBar = {
+            AppBottomBar(
+                isVisible = rememberSaveable { mutableStateOf(true) },
+                navController = navController
+            )
         }
     )
 }
