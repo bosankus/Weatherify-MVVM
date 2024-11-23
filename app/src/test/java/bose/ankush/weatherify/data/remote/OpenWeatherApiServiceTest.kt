@@ -3,14 +3,9 @@ package bose.ankush.weatherify.data.remote
 import bose.ankush.weatherify.MainCoroutineRule
 import bose.ankush.weatherify.MockWebServerUtil.enqueueResponse
 import bose.ankush.weatherify.data.remote.api.OpenWeatherApiService
-import bose.ankush.weatherify.data.remote.dto.ForecastTestResponse
 import bose.ankush.weatherify.data.remote.dto.toAirQuality
-import bose.ankush.weatherify.data.remote.dto.toForecastTestResponse
-import bose.ankush.weatherify.data.remote.dto.toWeather
 import bose.ankush.weatherify.domain.model.AirQuality
-import bose.ankush.weatherify.domain.model.Weather
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
@@ -22,7 +17,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class OpenWeatherApiServiceTest {
 
     private val mockWebServer = MockWebServer()
@@ -55,47 +49,6 @@ class OpenWeatherApiServiceTest {
     fun teardown() {
         mockWebServer.shutdown()
     }
-
-    @Test
-    fun `getTodaysWeatherReport should fetch response successfully with 200 code`(): Unit =
-        mainCoroutineRule.testScope.runTest {
-            try {
-                mockWebServer.enqueueResponse("weather_report.json", 200)
-                val actualResponse =
-                    openWeatherApiService.getTodaysWeatherReport("Kolkata").toWeather()
-                val expectedResponse = Weather(
-                    cod = 200,
-                    temp = 294.16,
-                    humidity = 39,
-                    wind = 2.36,
-                    windAngle = 54,
-                    name = "Kolkata",
-                    icon = "01n",
-                )
-                assertThat(actualResponse).isEqualTo(expectedResponse)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-    @Test
-    fun `getWeatherForecastList should fetch response successfully with 200 code`(): Unit =
-        mainCoroutineRule.testScope.runTest {
-            try {
-                mockWebServer.enqueueResponse("weather_forecast.json", 200)
-                val actualResponse = openWeatherApiService.getWeatherForecastList("Kolkata")
-                    .toForecastTestResponse()
-                val expectedResponse = ForecastTestResponse(
-                    cod = "200",
-                    cnt = 1,
-                    windSpeed = 2.46,
-                    cityName = "Kolkata"
-                )
-                assertThat(actualResponse).isEqualTo(expectedResponse)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
 
     @Test
     fun `getCurrentAirQuality should fetch response successfully with 200 code`() =

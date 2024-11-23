@@ -6,14 +6,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -30,23 +31,14 @@ import bose.ankush.weatherify.base.common.component.ScreenTopAppBar
 import bose.ankush.weatherify.presentation.navigation.AppBottomBar
 
 @Composable
-fun SettingsScreen(
+internal fun SettingsScreen(
     navController: NavController,
     onNavAction: () -> Unit,
-    onLanguageNavAction:(Array<String>) -> Unit
+    onLanguageNavAction: (Array<String>) -> Unit,
+    onNotificationNavAction: () -> Unit
 ) {
 
-    val notificationCheckedState = remember { mutableStateOf(false) }
-    val icon: (@Composable () -> Unit)? = if (notificationCheckedState.value) {
-        {
-            Icon(
-                imageVector = Icons.Filled.Check,
-                contentDescription = null,
-            )
-        }
-    } else {
-        null
-    }
+    val notificationCheckedState = remember { mutableStateOf(true) }
     val languageList = LocaleConfigMapper.getAvailableLanguagesFromJson(
         jsonFile = "countryConfig.json",
         context = LocalContext.current
@@ -61,63 +53,114 @@ fun SettingsScreen(
             )
         },
         content = { innerPadding ->
-            Column(
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                Row(
+            Column(modifier = Modifier.padding(innerPadding)) {
+                // Notification block
+                OutlinedCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(start = 16.dp, end = 16.dp)
                 ) {
-                    Text(
-                        text = "Notification",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                    Switch(
-                        checked = notificationCheckedState.value,
-                        onCheckedChange = { notificationCheckedState.value = it },
-                        thumbContent = icon
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(all = 16.dp),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = "Notification",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                        Text(
+                            modifier = Modifier.padding(top = 8.dp),
+                            text = "Turn on notification permission to get weather updates on the go.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                        Button(
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                                .align(Alignment.End)
+                                .height(40.dp),
+                            enabled = notificationCheckedState.value,
+                            onClick = {
+                                onNotificationNavAction.invoke()
+                                notificationCheckedState.value = !notificationCheckedState.value
+                            }) {
+                            Text(if (notificationCheckedState.value) "Turned on" else "Turn on")
+                        }
+                    }
                 }
 
-                Row(
+                // Language block
+                OutlinedCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                        .clickable { onLanguageNavAction.invoke(languageList) },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .clickable { onLanguageNavAction.invoke(languageList) }
                 ) {
-                    Text(
-                        text = "Language",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowRight,
-                        contentDescription = null
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(all = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Language",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                            Text(
+                                modifier = Modifier.padding(top = 8.dp),
+                                text = "Select your preferred language for a personalized experience.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Filled.KeyboardArrowRight,
+                            contentDescription = null
+                        )
+                    }
                 }
 
-                Row(
+                // Language block
+                OutlinedCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .clickable { onLanguageNavAction.invoke(languageList) }
                 ) {
-                    Text(
-                        text = "Get Premium",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowRight,
-                        contentDescription = null
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(all = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Get Premium",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                            Text(
+                                modifier = Modifier.padding(top = 8.dp),
+                                text = "Upgrade to Premium and unlock exclusive features, priority support, and an ad-free experience.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Filled.KeyboardArrowRight,
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         },

@@ -14,6 +14,7 @@ import androidx.navigation.navigation
 import bose.ankush.language.presentation.LanguageScreen
 import bose.ankush.weatherify.base.common.Extension.isDeviceSDKAndroid13OrAbove
 import bose.ankush.weatherify.base.common.Extension.openAppLocaleSettings
+import bose.ankush.weatherify.base.common.Extension.openAppNotificationSettings
 import bose.ankush.weatherify.presentation.MainViewModel
 import bose.ankush.weatherify.presentation.cities.CitiesListScreen
 import bose.ankush.weatherify.presentation.home.AirQualityDetailsScreen
@@ -125,7 +126,8 @@ fun AppNavigation(viewModel: MainViewModel) {
                         } else {
                             context.openAppLocaleSettings()
                         }
-                    }
+                    },
+                    onNotificationNavAction = { context.openAppNotificationSettings() }
                 )
             }
             composable(

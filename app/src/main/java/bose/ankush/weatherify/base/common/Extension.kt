@@ -111,6 +111,15 @@ object Extension {
         })
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun Context.openAppNotificationSettings() {
+        startActivity(Intent().apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            data = Uri.parse("package:$packageName")
+        })
+    }
+
     fun isDeviceSDKAndroid13OrAbove(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
     }
