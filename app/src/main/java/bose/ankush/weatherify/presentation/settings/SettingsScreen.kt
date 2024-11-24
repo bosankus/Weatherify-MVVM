@@ -225,8 +225,8 @@ fun ScreenHeader(
         )
         RichTooltipBox(
             tooltipState = tooltipState,
-            title = { Text("Hi Sneha,") },
-            text = { Text("Ankush sends you love and kisses to you") },
+            title = { Text("Hi Maa,") },
+            text = { Text(text = "Baba sends you love, kisses and hug ❤\uFE0F") },
             action = {
                 Text(
                     text = "Call him",
@@ -243,7 +243,7 @@ fun ScreenHeader(
             }
         ) {
             Image(
-                painter = painterResource(id = R.drawable.default_avatar),
+                painter = painterResource(id = R.drawable.zobo),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
