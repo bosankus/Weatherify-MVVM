@@ -44,6 +44,13 @@ object Extension {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun Context.hasNotificationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            ACCESS_NOTIFICATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     fun String.getIconUrl(size: String = "@2x.png"): String {
         return "$OPEN_WEATHER_IMG_URL$this$size"
     }
@@ -115,15 +122,6 @@ object Extension {
         startActivity(Intent().apply {
             action = Settings.ACTION_APP_LOCALE_SETTINGS
             data = Uri.fromParts("package", packageName, null)
-        })
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun Context.openAppNotificationSettings() {
-        startActivity(Intent().apply {
-            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            data = Uri.parse("package:$packageName")
         })
     }
 

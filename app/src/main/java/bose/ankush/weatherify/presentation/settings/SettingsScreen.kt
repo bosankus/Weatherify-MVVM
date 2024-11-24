@@ -23,6 +23,7 @@ import androidx.compose.material3.RichTooltipState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import bose.ankush.weatherify.R
 import bose.ankush.weatherify.base.LocaleConfigMapper
+import bose.ankush.weatherify.presentation.MainViewModel
 import bose.ankush.weatherify.presentation.navigation.AppBottomBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -45,14 +47,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SettingsScreen(
+    viewModel: MainViewModel,
     navController: NavController,
     onLanguageNavAction: (Array<String>) -> Unit,
     onNotificationNavAction: () -> Unit,
-    onAvatarNavAction: () -> Unit
+    onAvatarNavAction: () -> Unit,
 ) {
+    val isNotificationBannerVisible = viewModel.showNotificationCardItem.collectAsState().value
     val tooltipState = remember { RichTooltipState() }
     val scope = rememberCoroutineScope()
-    val notificationCheckedState = remember { mutableStateOf(true) }
     val languageList = LocaleConfigMapper.getAvailableLanguagesFromJson(
         jsonFile = "countryConfig.json",
         context = LocalContext.current
@@ -72,40 +75,37 @@ internal fun SettingsScreen(
         content = { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
                 // Notification block
-                OutlinedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 30.dp)
-                ) {
-                    Column(
+                if (isNotificationBannerVisible) {
+                    OutlinedCard(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(all = 16.dp),
-                        verticalArrangement = Arrangement.SpaceBetween,
-                        horizontalAlignment = Alignment.Start
+                            .padding(start = 16.dp, end = 16.dp, top = 30.dp)
                     ) {
-                        Text(
-                            text = "Notification",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                        Text(
-                            modifier = Modifier.padding(top = 8.dp),
-                            text = "Turn on notification permission to get weather updates on the go.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                        Button(
+                        Column(
                             modifier = Modifier
-                                .padding(top = 8.dp)
-                                .align(Alignment.End)
-                                .height(40.dp),
-                            enabled = notificationCheckedState.value,
-                            onClick = {
-                                onNotificationNavAction.invoke()
-                                notificationCheckedState.value = !notificationCheckedState.value
-                            }) {
-                            Text(if (notificationCheckedState.value) "Turned on" else "Turn on")
+                                .fillMaxWidth()
+                                .padding(all = 16.dp),
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = "Notification",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                            Text(
+                                modifier = Modifier.padding(top = 8.dp),
+                                text = "Turn on notification permission to get weather updates on the go.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                            Button(
+                                modifier = Modifier
+                                    .padding(top = 8.dp)
+                                    .align(Alignment.End)
+                                    .height(40.dp),
+                                onClick = { onNotificationNavAction.invoke() })
+                            { Text("Turn on") }
                         }
                     }
                 }

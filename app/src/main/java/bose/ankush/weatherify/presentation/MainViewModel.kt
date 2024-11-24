@@ -40,6 +40,12 @@ class MainViewModel @Inject constructor(
     private val _launchPhoneCallPermission = MutableStateFlow(false)
     val launchPhoneCallPermission = _launchPhoneCallPermission.asStateFlow()
 
+    private val _launchNotificationPermission = MutableStateFlow(false)
+    val launchNotificationPermission = _launchNotificationPermission.asStateFlow()
+
+    private val _showNotificationCardItem = MutableStateFlow(false)
+    val showNotificationCardItem = _showNotificationCardItem.asStateFlow()
+
     private val dataFetchExceptionHandler = CoroutineExceptionHandler { _, e ->
         _uiState.update { UIState(error = UiText.DynamicText(e.message.toString())) }
     } + dispatchers.io
@@ -61,6 +67,14 @@ class MainViewModel @Inject constructor(
 
     fun updatePhoneCallPermission(launchState: Boolean) {
         _launchPhoneCallPermission.update { launchState }
+    }
+
+    fun updateNotificationPermission(launchState: Boolean) {
+        _launchNotificationPermission.update { launchState }
+    }
+
+    fun updateShowNotificationBannerState(visible: Boolean) {
+        _showNotificationCardItem.update { visible }
     }
 
     @SuppressLint("MissingPermission")
