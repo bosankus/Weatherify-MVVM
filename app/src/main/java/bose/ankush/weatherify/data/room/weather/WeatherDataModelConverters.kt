@@ -15,7 +15,7 @@ class WeatherDataModelConverters (private val parser: Parser) {
     ) ?: "[]"
 
     @TypeConverter
-    fun fromAlertJson(alertString: String): List<WeatherEntity.Alert?>? =
+    fun fromAlertJson(alertString: String): List<WeatherEntity.Alert?> =
         parser.fromJson(
             alertString,
             object : TypeToken<List<WeatherEntity.Alert?>?>() {}.type
@@ -28,7 +28,7 @@ class WeatherDataModelConverters (private val parser: Parser) {
     ) ?: "[]"
 
     @TypeConverter
-    fun fromDailyWeather(dailyWeatherString: String): List<WeatherEntity.Daily?>? =
+    fun fromDailyWeather(dailyWeatherString: String): List<WeatherEntity.Daily?> =
         parser.fromJson(
             dailyWeatherString,
             object : TypeToken<List<WeatherEntity.Daily?>?>() {}.type
@@ -42,7 +42,7 @@ class WeatherDataModelConverters (private val parser: Parser) {
         ) ?: "[]"
 
     @TypeConverter
-    fun fromHourlyWeather(hourlyWeatherString: String): List<WeatherEntity.Hourly?>? =
+    fun fromHourlyWeather(hourlyWeatherString: String): List<WeatherEntity.Hourly?> =
         parser.fromJson(
             hourlyWeatherString,
             object : TypeToken<List<WeatherEntity.Hourly?>?>() {}.type
