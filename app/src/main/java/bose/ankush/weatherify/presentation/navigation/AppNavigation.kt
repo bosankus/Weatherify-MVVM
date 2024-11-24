@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import bose.ankush.language.presentation.LanguageScreen
+import bose.ankush.weatherify.base.common.Extension.callNumber
 import bose.ankush.weatherify.base.common.Extension.isDeviceSDKAndroid13OrAbove
 import bose.ankush.weatherify.base.common.Extension.openAppLocaleSettings
 import bose.ankush.weatherify.base.common.Extension.openAppNotificationSettings
@@ -119,7 +120,6 @@ fun AppNavigation(viewModel: MainViewModel) {
             ) {
                 SettingsScreen(
                     navController = navController,
-                    onNavAction = { navController.popBackStack() },
                     onLanguageNavAction = {
                         if (isDeviceSDKAndroid13OrAbove()) {
                             navController.navigate(Screen.LanguageScreen.withArgs(it))
@@ -127,7 +127,8 @@ fun AppNavigation(viewModel: MainViewModel) {
                             context.openAppLocaleSettings()
                         }
                     },
-                    onNotificationNavAction = { context.openAppNotificationSettings() }
+                    onNotificationNavAction = { context.openAppNotificationSettings() },
+                    onAvatarNavAction = { context.callNumber() }
                 )
             }
             composable(

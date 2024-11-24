@@ -120,6 +120,13 @@ object Extension {
         })
     }
 
+    fun Context.callNumber() {
+        startActivity(Intent().apply {
+            action = Intent.ACTION_CALL
+            data = Uri.parse("tel:+917003540623")
+        })
+    }
+
     fun isDeviceSDKAndroid13OrAbove(): Boolean {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
     }

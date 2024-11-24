@@ -22,6 +22,7 @@ const val DEFAULT_CITY_NAME = "New Delhi"
 /* Permission constants */
 const val ACCESS_FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION
 const val ACCESS_COARSE_LOCATION = android.Manifest.permission.ACCESS_COARSE_LOCATION
+const val ACCESS_PHONE_CALL = android.Manifest.permission.CALL_PHONE
 val PERMISSIONS_TO_REQUEST = arrayOf(
     ACCESS_FINE_LOCATION,
     ACCESS_COARSE_LOCATION
