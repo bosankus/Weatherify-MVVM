@@ -34,23 +34,17 @@ class WeatherRepositoryImpl @Inject constructor(
      */
     override suspend fun refreshWeatherData(coordinates: Pair<Double, Double>) {
         withContext(dispatcher.io) {
-            try {
-                // fetch data from API
-                val weatherData = apiService.getOneCallWeather(
-                    coordinates.first.toString(),
-                    coordinates.second.toString()
-                )
-                val airQuality = apiService.getCurrentAirQuality(
-                    latitude = coordinates.first.toString(),
-                    longitude = coordinates.second.toString()
-                ).toAirQuality()
-                // store the data in room db
-                weatherDatabase.withTransaction {
-                    weatherDatabase.weatherDao().refreshWeather(weatherData, airQuality)
-                }
-            } catch (e: Exception) {
-                // throw exception in case of error
-                e.message
+            val weatherData = apiService.getOneCallWeather(
+                coordinates.first.toString(),
+                coordinates.second.toString()
+            )
+            val airQuality = apiService.getCurrentAirQuality(
+                latitude = coordinates.first.toString(),
+                longitude = coordinates.second.toString()
+            ).toAirQuality()
+            // store the data in room db
+            weatherDatabase.withTransaction {
+                weatherDatabase.weatherDao().refreshWeather(weatherData, airQuality)
             }
         }
     }

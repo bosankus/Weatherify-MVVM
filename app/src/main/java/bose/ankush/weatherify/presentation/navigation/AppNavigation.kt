@@ -128,7 +128,11 @@ fun AppNavigation(viewModel: MainViewModel) {
                         }
                     },
                     onNotificationNavAction = { context.openAppNotificationSettings() },
-                    onAvatarNavAction = { context.callNumber() }
+                    onAvatarNavAction = {
+                        if (!context.callNumber()) {
+                            viewModel.updatePhoneCallPermission(launchState = true)
+                        }
+                    }
                 )
             }
             composable(

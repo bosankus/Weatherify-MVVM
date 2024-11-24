@@ -31,3 +31,4 @@ val PERMISSIONS_TO_REQUEST = arrayOf(
 /*Room central db name*/
 const val WEATHER_DATABASE_NAME = "central_weather_table"
 const val AQ_DATABASE_NAME = "central_aq_table"
+const val PHONE_NUMBER = "tel:+91XXXXXXXXX"

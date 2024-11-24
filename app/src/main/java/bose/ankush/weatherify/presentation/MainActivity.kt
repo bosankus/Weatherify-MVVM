@@ -15,9 +15,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import bose.ankush.weatherify.base.common.ACCESS_PHONE_CALL
+import bose.ankush.weatherify.base.common.Extension.callNumber
 import bose.ankush.weatherify.base.common.Extension.hasLocationPermission
 import bose.ankush.weatherify.base.common.Extension.openAppSystemSettings
 import bose.ankush.weatherify.base.common.PERMISSIONS_TO_REQUEST
@@ -45,14 +48,19 @@ class MainActivity : AppCompatActivity() {
         setContent {
             WeatherifyTheme {
                 val context: Context = LocalContext.current
+                val launchPhoneCallPermissionState =
+                    viewModel.launchPhoneCallPermission.collectAsState()
                 if (context.hasLocationPermission()) {
                     // if permission granted already then fetch and save location coordinates
                     viewModel.fetchAndSaveLocationCoordinates()
                 } else {
                     // request location permission
-                    RequestLocationPermission()
+                    RequestLocationPermission(context)
                 }
-
+                if (launchPhoneCallPermissionState.value) {
+                    // request phone call permission
+                    RequestPhoneCallPermission(context)
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -65,8 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun RequestLocationPermission() {
-        val context: Context = LocalContext.current
+    fun RequestLocationPermission(context: Context) {
         val permissionQueue = viewModel.permissionDialogQueue
 
         val locationPermissionsResultLauncher =
@@ -97,6 +104,21 @@ class MainActivity : AppCompatActivity() {
 
         LaunchedEffect(key1 = Unit) {
             locationPermissionsResultLauncher.launch(PERMISSIONS_TO_REQUEST)
+        }
+    }
+
+    @Composable
+    fun RequestPhoneCallPermission(context: Context) {
+        val phoneCallPermissionResultLauncher =
+            rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+                onResult = { isGranted ->
+                    // TODO: Hardcoded task to call phone number as it is triggered from 1 place [AppNavigation]
+                    if (isGranted) context.callNumber()
+                }
+            )
+
+        LaunchedEffect(key1 = Unit) {
+            phoneCallPermissionResultLauncher.launch(ACCESS_PHONE_CALL)
         }
     }
 

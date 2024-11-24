@@ -93,7 +93,7 @@ fun HandleScreenError(
     onErrorAction: () -> Unit
 ) {
     ShowError(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
         msg =
         weatherReports?.asString(context) ?: airQualityReports?.asString(context),
         buttonText = stringResource(id = R.string.retry_btn_txt),

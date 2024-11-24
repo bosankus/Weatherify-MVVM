@@ -37,6 +37,13 @@ object Extension {
                 ) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun Context.hasPhoneCallPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            ACCESS_PHONE_CALL
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     fun String.getIconUrl(size: String = "@2x.png"): String {
         return "$OPEN_WEATHER_IMG_URL$this$size"
     }
@@ -50,7 +57,7 @@ object Extension {
         }
     }
 
-    fun String.formatTextCapitalization() : String {
+    fun String.formatTextCapitalization(): String {
         val firstLetter = this[0].uppercaseChar()
         val restOfString = this.substring(1)
         return firstLetter + restOfString
@@ -120,11 +127,16 @@ object Extension {
         })
     }
 
-    fun Context.callNumber() {
-        startActivity(Intent().apply {
-            action = Intent.ACTION_CALL
-            data = Uri.parse("tel:+917003540623")
-        })
+    fun Context.callNumber(): Boolean {
+        if (this.hasPhoneCallPermission()) {
+            startActivity(Intent().apply {
+                action = Intent.ACTION_CALL
+                data = Uri.parse(PHONE_NUMBER)
+            })
+            return true
+        } else {
+            return false
+        }
     }
 
     fun isDeviceSDKAndroid13OrAbove(): Boolean {
