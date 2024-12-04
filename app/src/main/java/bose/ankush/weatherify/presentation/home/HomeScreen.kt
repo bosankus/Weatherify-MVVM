@@ -32,7 +32,6 @@ import bose.ankush.weatherify.presentation.home.component.HourlyWeatherForecastR
 import bose.ankush.weatherify.presentation.home.state.ShowError
 import bose.ankush.weatherify.presentation.home.state.ShowLoading
 import bose.ankush.weatherify.presentation.navigation.AppBottomBar
-import timber.log.Timber
 
 @Composable
 fun HomeScreen(
@@ -43,7 +42,7 @@ fun HomeScreen(
     val uiState: UIState = viewModel.uiState.collectAsState().value
 
     // reacting as per response state change
-    Timber.tag("Ankush UI State").d("HomeScreen: %s", uiState)
+    // Timber.tag("HomeScreen UI States").d("New state: %s", uiState)
     when {
         !uiState.error?.asString(context).isNullOrEmpty() -> {
             // Screen error handler
