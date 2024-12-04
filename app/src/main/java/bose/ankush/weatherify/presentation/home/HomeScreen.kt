@@ -47,20 +47,13 @@ fun HomeScreen(
     when {
         !uiState.error?.asString(context).isNullOrEmpty() -> {
             // Screen error handler
-            HandleScreenError(
-                context,
-                uiState.error,
-                uiState.error
-            ) { viewModel.fetchAndSaveLocationCoordinates() }
+            HandleScreenError(context, uiState.error) { viewModel.fetchAndSaveLocationCoordinates() }
         }
 
         uiState.weatherData?.current?.weather?.isNotEmpty() == true ||
                 uiState.airQualityData?.aqi != null -> {
             // Show data on UI
-            ShowUIContainer(
-                uiState,
-                navController
-            )
+            ShowUIContainer(uiState, navController)
         }
 
         else -> {
@@ -83,15 +76,14 @@ fun HandleScreenLoading() {
 @Composable
 fun HandleScreenError(
     context: Context,
-    weatherReports: UiText?,
-    airQualityReports: UiText?,
+    errorText: UiText?,
     onErrorAction: () -> Unit
 ) {
     ShowError(
         modifier = Modifier
             .fillMaxSize()
             .padding(all = 16.dp),
-        msg = weatherReports?.asString(context) ?: airQualityReports?.asString(context),
+        msg = errorText?.asString(context),
         buttonText = stringResource(id = R.string.retry_btn_txt),
         buttonAction = onErrorAction
     )
