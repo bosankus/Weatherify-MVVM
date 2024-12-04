@@ -17,9 +17,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import bose.ankush.weatherify.base.common.AirQualityIndexAnalyser.getAQIAnalysedText
 import bose.ankush.weatherify.base.common.AirQualityIndexAnalyser.getFormattedAQI
 import bose.ankush.weatherify.domain.model.AirQuality
+import bose.ankush.weatherify.presentation.navigation.Screen
 
 /**
  * This composable is response to show air quality card on HomeScreen.
@@ -29,11 +31,11 @@ import bose.ankush.weatherify.domain.model.AirQuality
 @Composable
 internal fun BriefAirQualityReportCardLayout(
     airQuality: AirQuality,
-    onCardClick: () -> Unit
+    navController: NavController
 ) {
     ShowUI(
         aq = airQuality,
-        onItemClick = onCardClick
+        onItemClick = { navController.navigate(Screen.AirQualityDetailsScreen.route) }
     )
 }
 

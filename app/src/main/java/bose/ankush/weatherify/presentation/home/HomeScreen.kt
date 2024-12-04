@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import bose.ankush.weatherify.R
 import bose.ankush.weatherify.base.common.UiText
-import bose.ankush.weatherify.data.room.weather.WeatherEntity
-import bose.ankush.weatherify.domain.model.AirQuality
 import bose.ankush.weatherify.presentation.MainViewModel
 import bose.ankush.weatherify.presentation.UIState
 import bose.ankush.weatherify.presentation.home.component.BriefAirQualityReportCardLayout
@@ -34,7 +32,6 @@ import bose.ankush.weatherify.presentation.home.component.HourlyWeatherForecastR
 import bose.ankush.weatherify.presentation.home.state.ShowError
 import bose.ankush.weatherify.presentation.home.state.ShowLoading
 import bose.ankush.weatherify.presentation.navigation.AppBottomBar
-import bose.ankush.weatherify.presentation.navigation.Screen
 import timber.log.Timber
 
 @Composable
@@ -48,30 +45,28 @@ fun HomeScreen(
     // reacting as per response state change
     Timber.tag("Ankush UI State").d("HomeScreen: %s", uiState)
     when {
-        uiState.isLoading ->
-            // Screen loading handler
-            HandleScreenLoading()
-
-        !uiState.error?.asString(context).isNullOrEmpty() ->
+        !uiState.error?.asString(context).isNullOrEmpty() -> {
             // Screen error handler
             HandleScreenError(
                 context,
                 uiState.error,
                 uiState.error
             ) { viewModel.fetchAndSaveLocationCoordinates() }
+        }
 
         uiState.weatherData?.current?.weather?.isNotEmpty() == true ||
-                uiState.airQualityData?.aqi != null ->
+                uiState.airQualityData?.aqi != null -> {
             // Show data on UI
             ShowUIContainer(
-                uiState.weatherData,
-                uiState.airQualityData,
+                uiState,
                 navController
             )
+        }
 
-        else ->
-            // Screen loading handler for any other states
+        else -> {
+            // Show loading
             HandleScreenLoading()
+        }
     }
 
     // Handle back button press to exit app
@@ -93,9 +88,10 @@ fun HandleScreenError(
     onErrorAction: () -> Unit
 ) {
     ShowError(
-        modifier = Modifier.fillMaxSize().padding(all = 16.dp),
-        msg =
-        weatherReports?.asString(context) ?: airQualityReports?.asString(context),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(all = 16.dp),
+        msg = weatherReports?.asString(context) ?: airQualityReports?.asString(context),
         buttonText = stringResource(id = R.string.retry_btn_txt),
         buttonAction = onErrorAction
     )
@@ -103,10 +99,11 @@ fun HandleScreenError(
 
 @Composable
 private fun ShowUIContainer(
-    weatherReports: WeatherEntity?,
-    airQualityReports: AirQuality?,
+    uiState: UIState,
     navController: NavController
 ) {
+    val weatherReports = uiState.weatherData
+    val airQualityReports = uiState.airQualityData
     Box {
         Scaffold(content = { innerPadding ->
             LazyColumn(
@@ -117,15 +114,12 @@ private fun ShowUIContainer(
                 // Show current weather report
                 item {
                     weatherReports?.current?.let { CurrentWeatherReportLayout(it) }
-                        ?: Timber.d("Weather report is empty")
                 }
 
                 // Show brief air quality report
                 item {
                     airQualityReports?.let {
-                        BriefAirQualityReportCardLayout(airQualityReports) {
-                            navController.navigate(Screen.AirQualityDetailsScreen.route)
-                        }
+                        BriefAirQualityReportCardLayout(airQualityReports, navController)
                     }
                 }
 
@@ -135,18 +129,21 @@ private fun ShowUIContainer(
                 }
 
                 // Show next 8 day's weather forecast report
-                item {
-                    Text(
-                        text = stringResource(id = R.string.daily_forecast_heading_txt),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                    )
-                }
                 weatherReports?.daily?.let { list ->
-                    items(list.size) { DailyWeatherForecastReportLayout(list, it) }
+                    if (list.isNotEmpty()) {
+                        item {
+                            // List heading text
+                            Text(
+                                text = stringResource(id = R.string.daily_forecast_heading_txt),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                            )
+                        }
+                        items(list.size) { DailyWeatherForecastReportLayout(list, it) }
+                    }
                 }
             }
         }, bottomBar = {

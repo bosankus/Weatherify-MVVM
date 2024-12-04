@@ -73,8 +73,8 @@ class MainViewModel @Inject constructor(
         _launchNotificationPermission.update { launchState }
     }
 
-    fun updateShowNotificationBannerState(visible: Boolean) {
-        _showNotificationCardItem.update { visible }
+    fun updateShowNotificationBannerState(launchState: Boolean) {
+        _showNotificationCardItem.update { launchState }
     }
 
     @SuppressLint("MissingPermission")
@@ -85,8 +85,6 @@ class MainViewModel @Inject constructor(
                     val coordinates = Pair(first = location.latitude, second = location.longitude)
                     // storing location on shared preference
                     preferenceManager.saveLocationPreferences(coordinates)
-                    // updating ui state that we have got coordinates
-                    _uiState.update { UIState(userLocation = coordinates) }
                     // load initial data when coordinates received
                     performInitialDataLoading()
                 }
@@ -99,16 +97,11 @@ class MainViewModel @Inject constructor(
     // initial data loading to get things ready for UI
     private fun performInitialDataLoading() {
         viewModelScope.launch(dataFetchExceptionHandler) {
-            /**
-             * Get saved weather report.
-             * In case there is no data, data will be refreshed as per user's location,
-             * and data will flow to compose UI
-             */
-
-            // considering we have current location coordinates, we are fetching that from storage preference
+            // Get coordinates from preference
             val preferences = preferenceManager.getLocationPreferenceFlow().first()
             val latitude = preferences[PreferenceManager.USER_LAT_LOCATION]
             val longitude = preferences[PreferenceManager.USER_LON_LOCATION]
+
             if (latitude != null && longitude != null) {
                 val location = Pair(latitude, longitude)
 
@@ -124,10 +117,9 @@ class MainViewModel @Inject constructor(
                             userLocation = location,
                             weatherData = weather,
                             airQualityData = air,
+                            error = null
                         )
-                    }.collect { newState ->
-                        _uiState.update { newState }
-                    }
+                    }.collect { newState -> _uiState.update { newState } }
             } else {
                 // in case we don't have coordinates, we don't have any requirement yet other than this :(
                 _uiState.update { UIState(isLoading = false) }
